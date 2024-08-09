@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taxonomic Hierarchy</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Taxonomic Hierarchy for {{ taxonomic_hierarchy[0].scientificName }}</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Taxon ID</th>
+                <th>Parent Name Usage ID</th>
+                <th>Scientific Name</th>
+                <th>Higher Classification</th>
+                <th>Kingdom</th>
+                <th>Phylum</th>
+                <th>Class</th>
+                <th>Order</th>
+                <th>Family</th>
+                <th>Genus</th>
+                <th>Subgenus</th>
+                <th>Taxon Rank</th>
+                <th>Scientific Name Authorship</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for taxon in taxonomic_hierarchy %}
+            <tr>
+                <td>{{ taxon.taxonID }}</td>
+                <td>{{ taxon.parentNameUsageID }}</td>
+                <td>{{ taxon.scientificName }}</td>
+                <td>{{ taxon.higherClassification }}</td>
+                <td>{{ taxon.kingdom }}</td>
+                <td>{{ taxon.phylum }}</td>
+                <td>{{ taxon.class }}</td>
+                <td>{{ taxon.order }}</td>
+                <td>{{ taxon.family }}</td>
+                <td>{{ taxon.genus }}</td>
+                <td>{{ taxon.subgenus }}</td>
+                <td>{{ taxon.taxonRank }}</td>
+                <td>{{ taxon.scientificNameAuthorship }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

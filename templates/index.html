@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taxonomic Hierarchy</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .dropdown {
+            margin: 10px 0;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #result {
+            margin-top: 20px;
+            text-align: center;
+            font-size: 18px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Select Taxonomic Hierarchy</h1>
+        <div class="dropdown">
+            <label for="kingdom">Kingdom:</label>
+            <select id="kingdom" onchange="updateDropdown('phylum', 'kingdom', this.value)">
+                <option value="">Select Kingdom</option>
+            </select>
+        </div>
+        <div class="dropdown">
+            <label for="phylum">Phylum:</label>
+            <select id="phylum" onchange="updateDropdown('class', 'phylum', this.value)">
+                <option value="">Select Phylum</option>
+            </select>
+        </div>
+        <div class="dropdown">
+            <label for="class">Class:</label>
+            <select id="class" onchange="updateDropdown('order', 'class', this.value)">
+                <option value="">Select Class</option>
+            </select>
+        </div>
+        <div class="dropdown">
+            <label for="order">Order:</label>
+            <select id="order" onchange="updateDropdown('family', 'order', this.value)">
+                <option value="">Select Order</option>
+            </select>
+        </div>
+        <div class="dropdown">
+            <label for="family">Family:</label>
+            <select id="family" onchange="updateDropdown('genus', 'family', this.value)">
+                <option value="">Select Family</option>
+            </select>
+        </div>
+        <div class="dropdown">
+            <label for="genus">Genus:</label>
+            <select id="genus" onchange="updateDropdown('subgenus', 'genus', this.value)">
+                <option value="">Select Genus</option>
+            </select>
+        </div>
+        <div class="dropdown">
+            <label for="subgenus">Subgenus:</label>
+            <select id="subgenus" onchange="updateDropdown('specificEpithet', 'subgenus', this.value)">
+                <option value="">Select Subgenus</option>
+            </select>
+        </div>
+        <div id="scientificName"></div>
+        <form id="scientific-name-form">
+            <button type="button" id="search-button">Pesquisar</button>
+        </form>
+        <div id="result"></div>
+    </div>
+
+    <script>
+        async function fetchLevels(level, parentLevel = null, parentValue = null) {
+            let url = `/levels/${level}`;
+            if (parentLevel && parentValue) {
+                url += `?parent_level=${parentLevel}&parent_value=${parentValue}`;
+            }
+
+            const response = await fetch(url);
+            const data = await response.json();
+
+            const selectElement = document.getElementById(level);
+            selectElement.innerHTML = `<option value="">Select ${level.charAt(0).toUpperCase() + level.slice(1)}</option>`;
+            data.forEach(item => {
+                const option = document.createElement('option');
+                option.value = item;
+                option.textContent = item;
+                selectElement.appendChild(option);
+            });
+        }
+
+        function updateDropdown(level, parentLevel, parentValue) {
+            fetchLevels(level, parentLevel, parentValue);
+        }
+
+        async function showScientificName(value) {
+            // Implementar lógica para exibir o nome científico e outras informações
+            document.getElementById('scientificName').textContent = `Selected: ${value}`;
+        }
+
+        document.getElementById('search-button').addEventListener('click', fetchScientificName);
+
+        async function fetchScientificName() {
+            const genus = document.getElementById('genus').value;
+            const subgenus = document.getElementById('subgenus').value;
+
+            if (genus && subgenus) {
+                const response = await fetch(`/scientific_name/?genus=${genus}&species=${subgenus}`);
+                const data = await response.json();
+                document.getElementById('result').innerText = data.scientific_name || data.error;
+            }
+        }
+
+        // Inicializar dropdown de reinos
+        updateDropdown('kingdom');
+    </script>
+</body>
+</html>
